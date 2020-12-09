@@ -1,46 +1,36 @@
-import React from "react";
-import { render } from "react-dom";
-import Cards from "./components/Cards/Cards";
-import Msg from "./components/message";
-import CountryPicker from "./components/CountryPicker/CountryPicker";
-import Chart from "./components/Chart/Chart";
-import styles from "./app.module.css";
+import { useEffect, useState } from "react";
+import "./App.css";
+import { InfoPanel, CountryPicker } from "./components";
 import { fetchData } from "./api";
+import Charts from "./charts/Charts";
 
-import Navbar from "./components/NavBar";
+function App() {
+  const [data, setData] = useState({});
 
-class App extends React.Component {
-  state = {
-    data: {},
-    country: "",
+  useEffect(() => {
+    const getData = async () => {
+      const fetchedData = await fetchData();
+      setData(fetchedData);
+    };
+    getData();
+  }, []);
+
+  const handleCountryChange = async (country) => {
+    let fetchedData;
+    if (country === "Global") {
+      fetchedData = await fetchData();
+    } else {
+      fetchedData = await fetchData(country);
+    }
+    setData(fetchedData);
   };
-
-  async componentDidMount() {
-    const fetchedData = await fetchData();
-    this.setState({ data: fetchedData });
-  }
-
-  handleCountryChange = async (country) => {
-    const fetchedData = await fetchData(country);
-    this.setState({ data: fetchedData, country: country });
-  };
-
-  render() {
-    const { data, country } = this.state;
-    return (
-      <div>
-        <Navbar />
-        <div className={styles.container}>
-          <img className={styles.image} src={Image} />
-          <Msg />
-          <Cards data={data} />
-
-          <CountryPicker handleCountryChange={this.handleCountryChange} />
-          <Chart data={data} country={country} />
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <CountryPicker handleCountryChange={handleCountryChange} />
+      <InfoPanel data={data} />
+      <Charts data={data} />
+    </div>
+  );
 }
 
 export default App;
