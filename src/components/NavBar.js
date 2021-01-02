@@ -37,7 +37,7 @@ export default function ButtonAppBar() {
             variant="h5"
             className={classes.title}
           >
-            Covid-19 Tracker
+            Corona Tracker (COVID-19)
           </Typography>
         </Toolbar>
       </AppBar>
